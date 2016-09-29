@@ -3,6 +3,7 @@ title: "homework-week-4_Rmd"
 output: html_document
 ---
 #Homework Week 4
+
 ##HW Problem 1 (a)
 ```{R, echo=TRUE}
 X<-8
