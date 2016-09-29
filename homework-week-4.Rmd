@@ -1,0 +1,36 @@
+---
+title: "homework-week-4_Rmd"
+output: html_document
+---
+#Homework Week 4
+##HW Problem 1 (a)
+```{R, echo=TRUE}
+X<-8
+l<-15
+prob_a<-1-ppois(q=X,lambda=l)
+prob_a
+```
+##HW Problem 1 (b)
+```{R,echo=TRUE}
+X<-0
+l<-15
+prob_b<-dpois(x=X,lambda = l)
+prob_b
+```
+##HW Problem 1 (c)
+```{R,echo=TRUE}
+X<-3
+l<-15
+prob_c<-dpois(x=X,lambda = l)
+prob_c
+```
+##HW Problem 1 (d)
+```{R,echo=TRUE}
+barplot(dpois(x=0:30,lambda=15),names.arg=0:30,space=0,xlab="Number of Calls Heard (x)",ylab="Pr(X = x)")
+```
+##HW Problem 1 (e/f)
+```{R,echo=TRUE}
+titi_calls <- rpois(n=104,lambda = 15)
+head(titi_calls)
+hist(titi_calls,xlim=c(0,30),probability = T,xlab="# of calls",ylab ="Frequency",main = "Histogram of Titi calls (simulated dataset:n=104)")
+```
