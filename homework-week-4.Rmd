@@ -35,3 +35,4 @@ titi_calls <- rpois(n=104,lambda = 15)
 head(titi_calls)
 hist(titi_calls,xlim=c(0,30),probability = T,xlab="# of calls",ylab ="Frequency",main = "Histogram of Titi calls (simulated dataset:n=104)")
 ```
+The charts differ in two main ways. Firstly, the barplot created in 1d shows a much more normal distribution than the histogram produced in 1e/f. Additionally, the mean and variance are both much greater for the simulated data from part 1e. I believe-though this interpretation may be incorrect!-that this is due to the fact that the histogram is plotting the density/frequency of hearing a certain # of calls during each of the 104 trials whereas the barplot is illustrating the probability (based on the Poisson distribution), that x number of calls would be heard in any random trial... However, I'm still a bit fuzzy on this interpretation so Tony, I'll definitely be seeing you next week to review a couple of things!
