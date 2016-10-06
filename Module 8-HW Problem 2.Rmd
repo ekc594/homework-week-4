@@ -1,0 +1,253 @@
+---
+title: "HW Problem 2"
+output: html_document
+---
+
+#Module 8-HW Problem 2
+
+```{R, echo=TRUE}
+zombies<-read.csv("C:/Users/EmmaKristina/Desktop/zombies.csv",header=T,sep=",")
+head(zombies)
+```
+###[1] Calculate the population mean and standard deviation for each quantitative random variable (height, weight, age, number of zombies killed, and years of education).
+```{R,echo=TRUE}
+#Each of these variables is a numeric vector within the "zombies" data frame. Since neither sample nor population mean involve degrees of freedom (i.e., they are both calculated using the total n), you can use the built in "mean" function to get the average of each variable
+meanheight<-mean(zombies$height)
+meanweight<-mean(zombies$weight)
+meanage<-mean(zombies$age)
+meanzombies_killed<-mean(zombies$zombies_killed)
+meaneducation<-mean(zombies$years_of_education)
+#Since we want the standard deviation of a population, rather than a mean, our sd function must include the population variance rather than sample variance. To calculate the POPULATION variance, rather than sample variance, you need to divide the sum of squares by N rather than degrees of freedom (in this case n-1)
+sdheight<-sqrt(sum((zombies$height-meanheight)^2)/length(zombies$height))
+sdweight<-sqrt(sum((zombies$weight-meanweight)^2)/length(zombies$weight))
+sdage<-sqrt(sum((zombies$age-meanage)^2)/length(zombies$age))
+sdzombies_killed<-sqrt(sum((zombies$zombies_killed-meanzombies_killed)^2)/length(zombies$zombies_killed))
+sdeducation<-sqrt(sum((zombies$years_of_education-meaneducation)^2)/length(zombies$years_of_education))
+#Results
+meanheight
+sdheight
+meanweight
+sdweight
+meanage
+sdage
+meanzombies_killed
+sdzombies_killed
+meaneducation
+sdeducation
+```
+###[2] Use ggplot and make boxplots of each of these variable by gender.
+```{R,echo=TRUE}
+#The first argument you need to input into ggplot is the data argument. In this case you're telling it to pull its data from the data frame "zombies". You then need to tell it which variables/columns you want on the x and y axes. You then close off the ggplot command and add a second command (using the "+" sign) to tell it that you want the chosen variables displayed in a boxplot format. You can then add the scale commands and name your axes, as well as the title command to title your graph
+library(ggplot2)
+height_by_gender<-ggplot(zombies,aes(x=zombies$gender,y=zombies$height))+geom_boxplot()+scale_x_discrete(name="Gender")+scale_y_discrete(name="Height")+ggtitle("Boxplot of Height by Gender")
+weight_by_gender<-ggplot(zombies,aes(x=zombies$gender,y=zombies$weight))+geom_boxplot()+scale_x_discrete(name="Gender")+scale_y_discrete(name="Weight")+ggtitle("Boxplot of Weight by Gender")
+age_by_gender<-ggplot(zombies,aes(x=zombies$gender,y=zombies$age))+geom_boxplot()+scale_x_discrete(name="Gender")+scale_y_discrete(name="Age")+ggtitle("Boxplot of Age by Gender")
+zombies_killed_by_gender<-ggplot(zombies,aes(x=zombies$gender,y=zombies$zombies_killed))+geom_boxplot()+scale_x_discrete(name="Gender")+scale_y_discrete(name="Number of Zombies Killed")+ggtitle("Boxplot of Number of Zombies Killed by Gender")
+education_by_gender<-ggplot(zombies,aes(x=zombies$gender,y=zombies$years_of_education))+geom_boxplot()+scale_x_discrete(name="Gender")+scale_y_discrete(name="Years of Education")+ggtitle("Boxplot of Years of Education by Gender")
+#Here are the resulting boxplots:
+height_by_gender
+weight_by_gender
+age_by_gender
+zombies_killed_by_gender
+education_by_gender
+```
+
+###[3] Use ggplot and make a scatterplots of height and weight in relation to age. Do these variables seem to be related? In what way?
+
+```{R,echo=TRUE}
+library(ggplot2)
+heightXage<-ggplot(zombies,aes(x=zombies$age,y=zombies$height))+geom_point()+scale_x_continuous(name="Age")+scale_y_continuous(name="Height")+ggtitle("Height of Individuals in Relation to Age")+geom_smooth(method = "lm", se = TRUE)
+heightXage
+heightXage.lm<-lm(zombies$age~zombies$height,data = zombies)
+summary(heightXage.lm)$r.squared
+weightXage<-ggplot(zombies,aes(x=zombies$age,y=zombies$weight))+geom_point()+scale_x_continuous(name="Age")+scale_y_continuous(name="Weight")+ggtitle("Weight of Individuals in Relation to Age")+geom_smooth(method = "lm", se = TRUE)
+weightXage
+weightXage.lm<-lm(zombies$age~zombies$weight,data=zombies)
+summary(weightXage.lm)$r.squared
+#Based on the scatterplots, both height and weight appear to be positively correlated with age, though the correlation appears to be stronger for heightXage judging by the lower degree of deviation of the data points from the regression line (i.e., relatively smaller residuals than observed in weightXage). That being said, both show a relatively large degree of spread around the regression lines an thus I did not anticipate a high coefficient of determination (r^2) for either. Results of the linear regressions confirm this theory in that both relationships have relatively low r-squared values: 0.4204 and 0.1026 for heightXage and weightXage, respectively. The fact that heightXage has a higher r-squared than weightXage also supports my earlier predication of height being more strongly correlated with age than is weight.
+```
+###[4] Using histograms and Q-Q plots, check whether the quantitative variables seem to be drawn from a normal distribution. Which seem to be and which do not? For those that are not, can you determine what common distribution they are drawn from?
+```{R,echo=TRUE}
+#Analysis of "Height" distribution via histogram and Q-Q plot 
+hist(zombies$height,main="Distribution of Height",xlab="Height")
+qqnorm(zombies$height,main="Normal QQ plot of heights")
+qqline(zombies$height,col="red")
+#Analysis of "Weight" distribution via histogram and Q-Q plot
+hist(zombies$weight,main="Distribution of Weight",xlab="Weight")
+qqnorm(zombies$weight,main="Normal QQ plot of weights")
+qqline(zombies$weight,col="red")
+#Analysis of "Age" distribution via histogram and Q-Q plot
+hist(zombies$age,main="Distribution of Age",xlab="Age")
+qqnorm(zombies$age,main="Normal QQ plot of age")
+qqline(zombies$age,col="red")
+#Analysis of "Zombies_killed" distribution via histogram and Q-Q plot
+hist(zombies$zombies_killed,main="Distribution of Number of Zombies Killed",xlab="Number of Zombies Killed")
+qqnorm(zombies$zombies_killed,main="Normal QQ plot of number of zombies killed")
+qqline(zombies$zombies_killed,col="red")
+#Analysis of "Years_of_Education" distribution via histogram and Q-Q plot
+hist(zombies$years_of_education,main="Distribution of Years of Education",xlab="Years pf Education")
+qqnorm(zombies$years_of_education,main="Normal QQ plot of years of education")
+qqline(zombies$years_of_education,col="red")
+
+#Interpretation of distributions: The first three variable (height, weight, age) clearly appear to follow a normal distribution as evidenced by histograms, in which the data frequencies follow a bell-shaped pattern that is roughly centered over the mean, and in the Q-Q plots in which the points align almost perfectly with the "expectation" line. The last two variables (zombies_killed and years_of_education) deviate significantly from this pattern, though in similar ways. The histograms show a strong positive scew and the points on the Q-Q plots are arranged as more of a series of incremental steps. Based on the evidence, I would guess that these two variables most closely match a Poisson distribution.  
+```
+###[5] Now use the sample() function to sample ONE subset of 30 zombies (without replacement) from this population and calculate the mean and sample standard deviation for each variable. Also estimate the standard error for each variable and construct the 95% confidence interval for each mean. Note that for the variables that are not drawn from the normal distribution, you will need to base your estimate of the CIs on some different distribution.
+```{R,echo=TRUE}
+#First subset the quantitative variables "zombies" data frame assign it to a new object (numvars). Then subset the new object to extract a random sample of 30 rows (in this case, rows=zombies)
+numvars<-data.frame(zombies$height,zombies$weight,zombies$age,zombies$zombies_killed,zombies$years_of_education)
+summary(numvars)
+str(numvars)
+sample<-numvars[sample(nrow(numvars),30,replace=F),]
+sample
+#height--Normal distribution
+m<-mean(sample$zombies.height)
+sd<-sd(sample$zombies.height)
+sample_std_error<-sd(sample$zombies.height)/sqrt(length(sample$zombies.height))
+sample_std_error
+lower<-m-qnorm(1-0.025)*sample_std_error
+upper<-m+qnorm(1-0.025)*sample_std_error
+ci<-c(lower,upper)
+ci
+#weight--Normal distribution
+m<-mean(sample$zombies.weight)
+sd<-sd(sample$zombies.weight)
+sample_std_error<-sd(sample$zombies.weight)/sqrt(length(sample$zombies.weight))
+sample_std_error
+lower<-m-qnorm(1-0.025)*sample_std_error
+upper<-m+qnorm(1-0.025)*sample_std_error
+ci<-c(lower,upper)
+ci
+#age--Normal distribution
+m<-mean(sample$zombies.age)
+sd<-sd(sample$zombies.age)
+sample_std_error<-sd(sample$zombies.age)/sqrt(length(sample$zombies.age))
+sample_std_error
+lower<-m-qnorm(1-0.025)*sample_std_error
+upper<-m+qnorm(1-0.025)*sample_std_error
+ci<-c(lower,upper)
+ci
+#zombies_killed--Poisson distribution
+m<-mean(sample$zombies.zombies_killed)
+sd<-sd(sample$zombies.zombies_killed)
+sample_std_error<-sd(sample$zombies.zombies_killed)/sqrt(length(sample$zombies.zombies_killed))
+sample_std_error
+lower<-m-qpois(1-0.025,lambda = m)*sample_std_error
+upper<-m+qpois(1-0.025,lambda = m)*sample_std_error
+ci<-c(lower,upper)
+ci
+#education--Poisson distribution
+m<-mean(sample$zombies.years_of_education)
+sd<-sd(sample$zombies.years_of_education)
+sample_std_error<-sd(sample$zombies.years_of_education)/sqrt(length(sample$zombies.years_of_education))
+sample_std_error
+lower<-m-qpois(1-0.025,lambda = m)*sample_std_error
+upper<-m+qpois(1-0.025,lambda = m)*sample_std_error
+ci<-c(lower,upper)
+ci
+```
+###[6] Now drawn 99 more random samples of 30 zombies out and calculate the mean for each of the these samples. Together with the first sample you drew out, you now have a set of 100 means for each variable (each based on 30 observations), which constitutes a sampling distribution for each variable. What are the means and standard deviations of this distribution for each variable? How do the standard deviations compare to the standard errors estimated in [5]? What do these sampling distributions look like? Are they normally distributed? What about for those variables that you concluded were not originally drawn from a normal distribution?
+```{R,echo=TRUE}
+k<-99
+#Height
+sample_set<-NULL
+for(i in 1:k){
+  sample_set[[i]]<-numvars[sample(1:nrow(numvars),30,replace=F),]
+}
+x<-NULL
+for(i in 1:k){
+  x[i]<-mean(sample_set[[i]]$zombies.height)
+}
+x
+m_height<-c(x,mean(sample$zombies.height))
+m_height
+msd<-NULL
+for(i in 1:k){
+  msd[i]<-sd(sample_set[[i]]$zombies.height)
+}
+msd_height<-c(msd,sd(sample$zombies.height))
+hist(m_height)
+qqnorm(m_height,main="Normal Q-Q Plot:m_height")
+qqline(m_height,col="red")
+mean(m_height)
+sd(msd_height)
+##The standard deviation of the means (msd_height) is ~0.27 less than the standard error that was estimated based on the original sample of 30. This is not surprising given that msd_height represents a much larger sample size. Based on both the histogram of means and the QQ plot, the sampling distribution for height appears to be normal.
+
+#Weight
+x<-NULL
+for(i in 1:k){
+  x[i]<-mean(sample_set[[i]]$zombies.weight)
+}
+x
+m_weight<-c(x,mean(sample$zombies.weight))
+m_weight
+msd<-NULL
+for(i in 1:k){
+  msd[i]<-sd(sample_set[[i]]$zombies.weight)
+}
+msd_weight<-c(msd,sd(sample$zombies.weight))
+hist(m_weight)
+qqnorm(m_weight,main="Normal Q-Q Plot:m_weight")
+qqline(m_weight,col="red")
+mean(m_weight)
+sd(msd_weight)
+##The standard deviation of the means (msd_weight) is ~1.62 less than the standard error that was estimated based on the original sample of 30. (see #height for explanation) Based on both the histogram of means and the QQ plot, the sampling distribution for weight appears to be normal.
+
+#Age
+x<-NULL
+for(i in 1:k){
+  x[i]<-mean(sample_set[[i]]$zombies.age)
+}
+x
+m_age<-c(x,mean(sample$zombies.age))
+m_age
+msd<-NULL
+for(i in 1:k){
+  msd[i]<-sd(sample_set[[i]]$zombies.age)
+}
+msd_age<-c(msd,sd(sample$zombies.age))
+hist(m_age)
+qqnorm(m_age,main="Normal Q-Q Plot:m_age")
+qqline(m_age,col="red")
+mean(m_age)
+sd(msd_age)
+##The standard deviation of the means (msd_age) is ~0.10 less than the standard error that was estimated based on the original sample of 30. (see #height for explanation) Based on both the histogram of means and the QQ plot, the sampling distribution for age appears to be normal.
+
+#Number of Zombies Killed
+x<-NULL
+for(i in 1:k){
+  x[i]<-mean(sample_set[[i]]$zombies.zombies_killed)
+}
+x
+m_zombies_killed<-c(x,mean(sample$zombies.zombies_killed))
+m_zombies_killed
+msd<-NULL
+for(i in 1:k){
+  msd[i]<-sd(sample_set[[i]]$zombies.zombies_killed)
+}
+msd_zombies_killed<-c(msd,sd(sample$zombies.zombies_killed))
+hist(m_zombies_killed)
+qqnorm(m_zombies_killed,main="Normal Q-Q Plot:m_zombies_killed")
+qqline(m_zombies_killed,col="red")
+mean(m_zombies_killed)
+sd(msd_zombies_killed)
+##In this case, the standard deviation of the means (msd_zombies_killed) was actually ~0.48 greater than the standard error that was estimated based on the original sample of 30. Interestingly, the sampling distribution now appears to be relatively normal, based on both the histogram of means and the QQ plot. This could indicate that our initial sample of 30 just happened to include a large enough number of outliers (likely with low "zombies_killed" values, based on the positive skew of the original histogram), which made it appear that the data did not follow a normal distribution when in fact, this may have been an artifact of low sample size.
+
+#Years of Education
+x<-NULL
+for(i in 1:k){
+  x[i]<-mean(sample_set[[i]]$zombies.years_of_education)
+}
+x
+m_education<-c(x,mean(sample$zombies.years_of_education))
+m_education
+msd<-NULL
+for(i in 1:k){
+  msd[i]<-sd(sample_set[[i]]$zombies.years_of_education)
+}
+msd_education<-c(msd,sd(sample$zombies.years_of_education))
+hist(m_education)
+qqnorm(m_education,main="Normal Q-Q Plot:m_education")
+qqline(m_education,col="red")
+mean(m_education)
+sd(msd_education)
+##The standard deviation of the means (msd_education) showed a similar pattern to those of the first three variables in that it is slightly less (~0.22) than the standard error that was estimated based on the original sample of 30. Like the zombies_killed distribution, however, this sampling distribution now also appears to be relatively normal, based on both the histogram of means and the QQ plot. I would venture to guess that, here again, low sample size was a significant confounding factor to my interpretation.
